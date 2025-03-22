@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Sardor Developer">
+    <meta name="description" content="QR Kod yaratish va yuklab olish xizmati">
+    <title>QR Kod Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('https://source.unsplash.com/1920x1080/?technology') no-repeat center center/cover;
+            flex-direction: column;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .settings, .qr-display {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .qr-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .download-btn, .admin-btn, .channel-btn, .history-btn {
+            padding: 12px 24px;
+            /* width: 20px; */
+            font-size: 18px;
+            background: rgba(0, 123, 255, 0.9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+        .download-btn:hover, .admin-btn:hover, .channel-btn:hover, .history-btn:hover {
+            background: rgba(0, 86, 179, 0.9);
+            box-shadow: 0 6px 12px rgba(0, 86, 179, 0.5);
+        }
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        @media (max-width: 600px) {
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="settings">
+            <h2>QR Kod Sozlamalari</h2>
+            <label>Matn:</label>
+            <input type="text" id="qrText" placeholder="Matn kiriting" value="Hello World"><br><br>
+            
+            <label>QR Rangini tanlang:</label>
+            <input type="color" id="qrColor" value="#000000"><br><br>
+            
+            <label>QR shaklini tanlang:</label>
+            <select id="qrShape">
+                <option value="">-- QR shaklini tanlang --</option>
+                <option value="square">Kvadrat</option>
+                <option value="circle">Dumaloq</option>
+                <option value="triangle">Uchburchak</option>
+                <option value="pentagon">Beshburchak</option>
+            </select>
+        </div>
+        
+        <div class="qr-display">
+            <h2>QR Kod</h2>
+            <div id="qrcode"></div>
+            <button class="download-btn" onclick="downloadQR()">Yuklab olish</button>
+        </div>
+    </div>
+    
+    <div class="btn-container">
+        <a href="https://t.me/admin_username" class="admin-btn">Admin bilan bog‘lanish</a>
+        <a href="https://t.me/channel_username" class="channel-btn">Telegram kanalga o‘tish</a>
+        <button class="history-btn" onclick="showHistory()">Eski QR kodlarni ko‘rish</button>
+    </div>
+
+    <script>
+        function generateQR() {
+            let qrText = document.getElementById("qrText").value;
+            let qrColor = document.getElementById("qrColor").value;
+            let qrShape = document.getElementById("qrShape").value;
+            let qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = "";
+            
+            if (!qrShape) {
+                qrContainer.innerHTML = "<p style='color:red;'>Iltimos, QR shaklini tanlang!</p>";
+                return;
+            }
+            
+            let qr = new QRCode(qrContainer, {
+                text: qrText,
+                width: 200,
+                height: 200,
+                colorDark: qrColor,
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            setTimeout(() => {
+                let qrCanvas = qrContainer.querySelector("canvas");
+                if (qrCanvas) {
+                    qrCanvas.classList.add(qrShape);
+                }
+            }, 100);
+        }
+        
+        function downloadQR() {
+            let qrCanvas = document.querySelector("#qrcode canvas");
+            if (!qrCanvas) {
+                alert("Avval QR kodni yarating!");
+                return;
+            }
+            let link = document.createElement("a");
+            link.href = qrCanvas.toDataURL("image/png");
+            link.download = "qrcode.png";
+            link.click();
+        }
+        
+        function showHistory() {
+            alert("Eski QR kodlar ko‘rsatish funksiyasi hali ishlab chiqilmoqda!");
+        }
+        
+        document.getElementById("qrText").addEventListener("input", generateQR);
+        document.getElementById("qrColor").addEventListener("input", generateQR);
+        document.getElementById("qrShape").addEventListener("change", generateQR);
+    </script>
+</body>
+</html>
